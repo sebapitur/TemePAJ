@@ -1,8 +1,9 @@
 package com.luxoft.bankapp.domain;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class Client {
+public class Client implements Comparable<Client> {
 
 	private String name;
 
@@ -39,7 +40,7 @@ public class Client {
 	}
 
 	public List<Account> getAccounts() {
-		return Collections.unmodifiableList(accounts.stream().toList());
+		return Collections.unmodifiableList(accounts.stream().collect(Collectors.toList()));
 	}
 
 	public String getClientGreeting() {
@@ -58,6 +59,10 @@ public class Client {
 	@Override
 	public boolean equals(Object o) {
 		return ((Client)o).name.equals(this.name) && ((Client)o).gender.equals((this.gender));
+	}
+
+	public int compareTo(Client other) {
+		return this.name.compareTo(other.name);
 	}
 
 

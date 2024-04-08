@@ -2,11 +2,23 @@ package com.luxoft.bankapp.domain;
 
 import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 
-public abstract class AbstractAccount implements Account {
+public abstract class AbstractAccount implements Account, Comparable<Account> {
 	
 	private int id;
 	protected double balance;
-	
+	public int compareTo(Account other) {
+		if (this.balance - other.getBalance() < 0) {
+			return -1;
+		}
+
+		if (this.balance - other.getBalance() > 0) {
+			return 1;
+		}
+
+		return 0;
+	}
+
+
 	public AbstractAccount(int id, double balance) {
 		this.id = id;
 		this.balance = balance;

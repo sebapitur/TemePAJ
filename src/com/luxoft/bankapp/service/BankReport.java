@@ -1,70 +1,87 @@
 package com.luxoft.bankapp.service;
-import java.util.AbstractMap.SimpleEntry;
+
 import com.luxoft.bankapp.domain.Account;
 import com.luxoft.bankapp.domain.Bank;
-import com.luxoft.bankapp.domain.CheckingAccount;
 import com.luxoft.bankapp.domain.Client;
 
-import javax.swing.*;
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
 
 public class BankReport {
-    int getNumberOfClients(Bank bank) {
+    public int getNumberOfClients(Bank bank) {
         return bank.getClients().size();
     }
 
-    int getNumberOfAccounts(Bank bank) {
-        return (int) bank.getClients().stream().
-                flatMap(client -> client.getAccounts().stream()).count();
+    public int getNumberOfAccounts(Bank bank) {
+        int count = 0;
+        for (Client client : bank.getClients()) {
+            count += client.getAccounts().size();
+        }
+        return count;
     }
 
-    SortedSet<Client> getClientsSorted(Bank bank) {
-        return bank.getClients().stream().
-                sorted(Comparator.comparing(Client::getName)).
-                collect(Collectors.toCollection(TreeSet::new));
+    public SortedSet<Client> getClientsSorted(Bank bank) {
+        SortedSet<Client> sortedClients = new TreeSet<>(Comparator.comparing(Client::getName));
+        sortedClients.addAll(bank.getClients());
+        return sortedClients;
     }
 
-    double getTotalSumInAccounts(Bank bank) {
-        return bank.getClients().stream().
-                flatMap(client -> client.getAccounts().stream()).
-                map(Account::getBalance).reduce(Double::sum).
-                orElse(-1.0);
+    public double getTotalSumInAccounts(Bank bank) {
+        double totalSum = 0;
+        for (Client client : bank.getClients()) {
+            for (Account account : client.getAccounts()) {
+                totalSum += account.getBalance();
+            }
+        }
+        return totalSum;
     }
 
-    SortedSet<Account> getAccountsSortedBySum(Bank bank) {
-        return bank.getClients().stream().
-                flatMap(client -> client.getAccounts().stream()).
-                sorted(Comparator.comparing(Account::getBalance)).
-                collect(Collectors.toCollection(TreeSet::new));
+    public SortedSet<Account> getAccountsSortedBySum(Bank bank) {
+        SortedSet<Account> sortedAccounts = new TreeSet<>(Comparator.comparing(Account::getBalance));
+        for (Client client : bank.getClients()) {
+            sortedAccounts.addAll(client.getAccounts());
+        }
+        return sortedAccounts;
     }
 
-    double getBankCreditSum(Bank bank) {
-        // TODO see what it means
-        return 0.0;
+    public double getBankCreditSum(Bank bank) {
+        double totalCreditSum = 0;
+        for (Client client : bank.getClients()) {
+            for (Account account : client.getAccounts()) {
+                totalCreditSum += account.maximumAmountToWithdraw() - account.getBalance();
+            }
+        }
+        return totalCreditSum;
     }
 
-    Map<Client, Collection<Account>> getCustomerAccounts(Bank bank) {
-        final HashMap<Client, Collection<Account>> clientAccountMapping = new HashMap<>();
-        bank.getClients().forEach(client -> clientAccountMapping.put(client, client.getAccounts()));
-
+    public Map<Client, Collection<Account>> getCustomerAccounts(Bank bank) {
+        Map<Client, Collection<Account>> clientAccountMapping = new HashMap<>();
+        for (Client client : bank.getClients()) {
+            clientAccountMapping.put(client, client.getAccounts());
+        }
         return clientAccountMapping;
     }
 
-    Map<String, List<Client>> getClientsByCity(Bank bank) {
-        final HashMap<String, List<Client>> cityClientMapping = new HashMap<>();
-        bank.getClients().forEach(client -> {
-            if (!cityClientMapping.containsKey(client.getCity())) {
-                cityClientMapping.put(client.getCity(), new LinkedList<>(Arrays.asList(new Client[]{client})));
+    public Map<String, List<Client>> getClientsByCity(Bank bank) {
+        Map<String, List<Client>> cityClientMapping = new HashMap<>();
+        for (Client client : bank.getClients()) {
+            String city = client.getCity();
+            if (!cityClientMapping.containsKey(city)) {
+                cityClientMapping.put(city, new LinkedList<>(Arrays.asList(client)));
             } else {
-                var sameCityClients = cityClientMapping.get(client.getCity());
-                sameCityClients.add(client);
-                cityClientMapping.put(client.getCity(), sameCityClients);
+                cityClientMapping.get(city).add(client);
             }
-        });
-
+        }
         return cityClientMapping;
     }
-}
 
+    public void getStatistics(Bank bank) {
+        System.out.println("Total number of clients " + this.getNumberOfClients(bank));
+        System.out.println("Total number of accounts " + this.getNumberOfAccounts(bank));
+        System.out.println("Sorted list of clients " + this.getClientsSorted(bank));
+        System.out.println("Total sum in accounts " + this.getTotalSumInAccounts(bank));
+        System.out.println("Account list sorted by sum " + this.getAccountsSortedBySum(bank));
+        System.out.println("Bank credit sum " + this.getBankCreditSum(bank));
+        System.out.println("All customer accounts " + this.getCustomerAccounts(bank));
+        System.out.println("Clients by city " + this.getClientsByCity(bank));
+    }
+}

@@ -2,6 +2,7 @@ package com.luxoft.bankapp.domain;
 
 import java.text.DateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.luxoft.bankapp.exceptions.ClientExistsException;
 import com.luxoft.bankapp.utils.ClientRegistrationListener;
@@ -49,7 +50,7 @@ public class Bank {
     }
 	
 	public List<Client> getClients() {
-		return Collections.unmodifiableList(clients.stream().toList());
+		return Collections.unmodifiableList(clients.stream() .sorted(Comparator.comparing(Client::getName)).collect(Collectors.toList()));
 	}
 	
 	class PrintClientListener implements ClientRegistrationListener {
