@@ -3,9 +3,11 @@ package com.luxoft.bankapp.domain;
 import com.luxoft.bankapp.employees.BankEmployee;
 
 public class Department {
-	public String name;
-	public BankEmployee manager;
-	
+
+	private String name;
+
+	private BankEmployee manager;
+
 	public Department(String name) {
 		this.name = name;
 	}

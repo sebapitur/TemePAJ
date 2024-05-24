@@ -8,26 +8,14 @@ import com.luxoft.bankapp.utils.Params;
 public abstract class AbstractAccount implements Account, Serializable, Cloneable {
 	
 	private static final long serialVersionUID = -2272551373694344386L;
-	
-	public static final int SAVING_ACCOUNT_TYPE = 1;
-	public static final int CHECKING_ACCOUNT_TYPE = 2;
-	
-	private int id;
-	private int type;
 
-	public double balance;
+	private int id;
+
+	private double balance;
 	
 	public AbstractAccount(int id, double amount) {
 		this.id = id;
 		this.balance = amount;
-	}
-	
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
 	}
 
 	@Override
@@ -50,18 +38,9 @@ public abstract class AbstractAccount implements Account, Serializable, Cloneabl
 		
 		this.balance -= amount;
 	}
-	
-	public double maximumAmountToWithdraw(){
-		switch (type) {
-		   case SAVING_ACCOUNT_TYPE:
-			   return balance;
-		   case CHECKING_ACCOUNT_TYPE:
-			   CheckingAccount checkingAccount = (CheckingAccount)this;
-			  return checkingAccount.balance + checkingAccount.overdraft;
-		}
-		
-        return 0;
-    }
+
+
+	public abstract double maximumAmountToWithdraw();
 
 	@Override
 	public int getId() {

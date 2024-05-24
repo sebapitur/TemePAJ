@@ -23,7 +23,7 @@ public class TestAccountCache {
 
         // test if the object fields are logically equal
         assert account1.getBalance() == account2.getBalance();
-        assert account1.overdraft == account2.overdraft;
+        assert account1.getOverdraft().equals(account2.getOverdraft());
     }
 
     @Test
@@ -31,9 +31,9 @@ public class TestAccountCache {
         AbstractAccount savingAccount = new SavingAccount(1, 1000);
         AbstractAccount checkingAccount = new CheckingAccount(2, 2000, 500);
         AccountCache.loadCache(savingAccount, checkingAccount);
-        assert AccountCache.getAccount(AccountType.SAVING_ACCOUNT.toString()).balance == 1000;
+        assert AccountCache.getAccount(AccountType.SAVING_ACCOUNT.toString()).getBalance() == 1000;
         CheckingAccount cachedCheckingAccount = (CheckingAccount) AccountCache.getAccount(AccountType.CHECKING_ACCOUNT.toString());
-        assert cachedCheckingAccount.balance == 2000;
-        assert cachedCheckingAccount.overdraft == 500;
+        assert cachedCheckingAccount.getBalance() == 2000;
+        assert cachedCheckingAccount.getOverdraft() == 500;
     }
 }
